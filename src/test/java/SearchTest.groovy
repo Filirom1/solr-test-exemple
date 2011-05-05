@@ -1,10 +1,11 @@
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer
-import org.apache.solr.util.AbstractSolrTestCase
+
+import org.filirom1.SearchHelper
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.filirom1.SearchHelper
+import org.apache.solr.AbstractSolrTestCase
 
 @RunWith(JUnit4)
 class SearchTest extends AbstractSolrTestCase {
@@ -39,7 +40,43 @@ class SearchTest extends AbstractSolrTestCase {
   @Test
   void testAddToIndex() {
     //execute
+    search.addToIndex("ID-1", [param_t: "param", param2_t: "param2"])
+
+    //check
+    assertEquals 1, search.list().size()
+  }
+
+  @Test
+  void testAddToIndexWithoutParams() {
+    //execute
+    search.addToIndex("ID-1", [:])
+
+    //check
+    assertEquals 1, search.list().size()
+  }
+
+  @Test
+  void testAddToIndexWithFile() {
+    //execute
     search.addToIndex("ID-1", [param_t: "param", param2_t: "param2"], getResource('document.html'))
+
+    //check
+    assertEquals 1, search.list().size()
+  }
+
+  @Test
+  void testAddToIndexButFileNotFound() {
+    //execute
+    search.addToIndex("ID-1", [param_t: "param", param2_t: "param2"], new File("not found"))
+
+    //check
+    assertEquals 1, search.list().size()
+  }
+
+  @Test
+  void testAddToIndexButFileIsNull() {
+    //execute
+    search.addToIndex("ID-1", [param_t: "param", param2_t: "param2"], null)
 
     //check
     assertEquals 1, search.list().size()

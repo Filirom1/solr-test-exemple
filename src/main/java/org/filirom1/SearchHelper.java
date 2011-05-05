@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +33,35 @@ public class SearchHelper {
     }
 
     /**
+     * @param id
+     * @param params
+     */
+    public void addToIndex(String id, Map<String, String> params) {
+        log.info("addToIndex " + id + " " + params);
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "id1", 1.0f);
+        doc.addField("name", "doc1", 1.0f);
+        doc.addField("price", "10");
+
+        /*doc.addField("id", id, 1.0f);
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            doc.addField(entry.getKey(), entry.getValue(), 1.0f);
+        } */
+        try {
+            server.add(doc);
+            server.commit();
+        } catch (Exception e) {
+            throw new SearchException("Unable to add " + id + "(" + params + ") to index : " + params, e);
+        }
+    }
+
+    /**
      * @param id     mandatory
      * @param params a map to index.
      * @param file   a file to index.
      */
     public void addToIndex(String id, Map<String, String> params, File file) {
+        log.info("addToIndex " + id + " " + params + " " + file);
         if (null == id || id.isEmpty()) {
             throw new SearchException("id is missing");
         }
@@ -53,6 +78,10 @@ public class SearchHelper {
             } catch (IOException e) {
                 throw new SearchException("Unable to read file : " + file.getAbsolutePath(), e);
             }
+        } else {
+            log.info("File not valid " + file + ". Data indexed without file : " + id + " " + params);
+            addToIndex(id, params);
+            return;
         }
         req.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
         try {
@@ -94,6 +123,7 @@ public class SearchHelper {
      * @param id the id to delete
      */
     public void removeFromIndex(String id) {
+        log.info("removeFromIndex " + id);
         try {
             getServer().deleteById(id);
         } catch (Exception e) {
@@ -105,6 +135,7 @@ public class SearchHelper {
      * Update the index. Push all pending insert and deletion.
      */
     public void updateIndex() {
+        log.info("updateIndex");
         try {
             getServer().commit();
         } catch (Exception e) {

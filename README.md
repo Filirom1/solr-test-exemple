@@ -8,8 +8,8 @@ You will be able to start a new Solr Server just for your tests.
 My tests extends *AbstractSolrTestCase* which provides some help in order to use
 an *EmbeddedSolrServer*
 
-Because AbstractSolrTestCase is not accessible anymore with 3.1 version, you will 
-have to downgrade to 1.4.1 (until 4.0) : 
+Because AbstractSolrTestCase is not accessible anymore with 3.1 version, I clone 
+the file in this repository (until 4.0) : 
 <https://issues.apache.org/jira/browse/SOLR-2061>
 
 
