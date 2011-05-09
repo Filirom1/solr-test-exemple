@@ -39,14 +39,10 @@ public class SearchHelper {
     public void addToIndex(String id, Map<String, String> params) {
         log.info("addToIndex " + id + " " + params);
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", "id1", 1.0f);
-        doc.addField("name", "doc1", 1.0f);
-        doc.addField("price", "10");
-
-        /*doc.addField("id", id, 1.0f);
+        doc.addField("id", id);
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            doc.addField(entry.getKey(), entry.getValue(), 1.0f);
-        } */
+            doc.addField(entry.getKey(), entry.getValue());
+        }
         try {
             server.add(doc);
             server.commit();
@@ -145,7 +141,7 @@ public class SearchHelper {
 
 
     public List<String> list() {
-        return search("*");
+        return search("*:*");
     }
 
 }

@@ -1,11 +1,10 @@
+import org.apache.solr.AbstractSolrTestCase
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer
-
 import org.filirom1.SearchHelper
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.apache.solr.AbstractSolrTestCase
 
 @RunWith(JUnit4)
 class SearchTest extends AbstractSolrTestCase {
@@ -25,9 +24,8 @@ class SearchTest extends AbstractSolrTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    def server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
     search = new SearchHelper();
-    search.server = server
+    search.server = new EmbeddedSolrServer(h.getCoreContainer(), h.getCore().getName());
     search.list().collect {search.removeFromIndex(it)}
     search.updateIndex()
     assertEquals 0, search.list().size()
@@ -44,6 +42,7 @@ class SearchTest extends AbstractSolrTestCase {
 
     //check
     assertEquals 1, search.list().size()
+    assertEquals "ID-1", search.list()[0]
   }
 
   @Test
